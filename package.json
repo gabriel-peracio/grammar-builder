@@ -2,6 +2,10 @@
   "name": "grammar-builder",
   "module": "index.ts",
   "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "test:watch": "bun test --watch"
+  },
   "devDependencies": {
     "@types/bun": "latest",
     "@types/lodash": "^4.17.1"
