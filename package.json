@@ -1,0 +1,14 @@
+{
+  "name": "grammar-builder",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/lodash": "^4.17.1"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "lodash": "^4.17.21",
+    "typescript": "^5.4.5"
+  }
+}
