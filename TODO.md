@@ -1,5 +1,6 @@
 ## TODO
 
+- [x] Add `root` rule
 - [ ] Add support for imports (e.g. define a "iso8601" reference, and then use it in a "date" field in another rule)
 - [ ] Add cardinality support (`oneOrMore`, `zeroOrMore`, `optional`)
 - [ ] Add sugar:
@@ -10,8 +11,8 @@
 - [ ] Add composability types:
   - [ ] `grammar.root(r=>r.oneOf('a', 'b'))` finalizes the grammar
   - [ ] `grammar.extend(otherGrammar)` merges two grammars, as long as `otherGrammar` doesn't have a root, and there are no rule conflicts (in which case, throw). Make sure that when extending, the references of `otherGrammar` become available for use in the new grammar.
-- [ ] Add JSDoc explanations for each rule and method
-- [ ] Ensure coverage is up to snuff
+- [x] Add JSDoc explanations for each rule and method
+- [x] Ensure coverage is up to snuff
 - [ ] Add husky to lint and prettify on commit
 - [ ] Add CI
 - [ ] Package and publish on npm
