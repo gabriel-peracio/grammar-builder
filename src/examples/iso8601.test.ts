@@ -1,5 +1,5 @@
 import { describe, it, expect } from "bun:test";
-import { iso8601 } from "../iso8601";
+import { iso8601 } from "../examples/iso8601";
 
 describe("iso8601", () => {
   it("should output a correct date grammar", () => {

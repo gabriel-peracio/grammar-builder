@@ -2,17 +2,43 @@
   "name": "grammar-builder",
   "module": "index.ts",
   "type": "module",
+  "version": "0.0.1",
+  "description": "A simple grammar builder compatible with GBNF (llama.cpp)",
+  "keywords": [
+    "grammar",
+    "llama.cpp",
+    "GBNF",
+    "constrained generation",
+    "LLM"
+  ],
+  "author": "Gabriel Peracio <gabriel-peracio@users.noreply.github.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gabriel-peracio/grammar-builder/issues"
+  },
+  "homepage": "https://github.com/gabriel-peracio/grammar-builder#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gabriel-peracio/grammar-builder.git"
+  },
+  "exports": {
+    ".": "./out/index.js"
+  },
+  "types": "./out/index.d.ts",
   "scripts": {
     "test": "bun test",
     "test:watch": "bun test --watch",
-    "test:coverage": "bun test --coverage"
+    "test:coverage": "bun test --coverage",
+    "build": "bun build --entrypoints src/index.ts --outdir ./out --target browser --sourcemap=external --minify && bunx tsc",
+    "publish": "npm run build && npm publish --access public",
+    "clean": "rm -rf ./out"
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/lodash": "^4.17.1"
+    "@types/lodash-es": "^4.17.12",
+    "typescript": "^5.4.5"
   },
   "dependencies": {
-    "lodash": "^4.17.21",
-    "typescript": "^5.4.5"
+    "lodash-es": "^4.17.21"
   }
 }
