@@ -3,7 +3,7 @@
   "module": "out/index.js",
   "main": "out/index.js",
   "type": "module",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A simple grammar builder compatible with GBNF (llama.cpp)",
   "keywords": [
     "grammar",
@@ -34,7 +34,7 @@
     "test:watch": "bun test --watch",
     "test:coverage": "bun test --coverage",
     "build": "bun build --entrypoints src/index.ts --outdir ./out --target browser --sourcemap=external --minify && bunx tsc",
-    "publish": "bun run clean && bun run build",
+    "prepublishOnly": "bun run clean && bun run build",
     "clean": "rm -rf ./out"
   },
   "devDependencies": {

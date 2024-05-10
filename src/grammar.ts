@@ -81,8 +81,23 @@ type RuleBuilder<T> = {
    */
   range: (range: string) => rangeRuleType;
 
+  /**
+   * The passed rule must occur one or more times
+   * @param rule The rule to augment with the "oneOrMore" cardinality
+   * @returns The rule with the "oneOrMore" cardinality
+   */
   oneOrMore(rule: rule): rule;
+  /**
+   * The passed rule can be absent or occur multiple times
+   * @param rule The rule to augment with the "zeroOrMore" cardinality
+   * @returns The rule with the "zeroOrMore" cardinality
+   */
   zeroOrMore(rule: rule): rule;
+  /**
+   * The passed rule can be absent or occur once
+   * @param rule The rule to augment with the "optional" cardinality
+   * @returns The rule with the "optional" cardinality
+   */
   optional(rule: rule): rule;
 };
 
