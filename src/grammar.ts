@@ -1,11 +1,18 @@
 import { kebabCase } from "lodash-es";
 
 export const ruleType = Symbol("ruleType");
+export const ruleCardinalityKey = Symbol("cardinality");
 
-type sequenceRuleType = { [ruleType]: "sequence"; parts: (string | rule)[] };
-type oneOfRuleType = { [ruleType]: "oneOf"; parts: (string | rule)[] };
-type refRuleType = { [ruleType]: "ref"; id: string };
-type rangeRuleType = { [ruleType]: "range"; range: string };
+enum ruleCardinality {
+  "zeroOrMore",
+  "oneOrMore",
+  "optional",
+}
+
+type sequenceRuleType = { [ruleType]: "sequence"; parts: (string | rule)[]; [ruleCardinalityKey]?: ruleCardinality };
+type oneOfRuleType = { [ruleType]: "oneOf"; parts: (string | rule)[]; [ruleCardinalityKey]?: ruleCardinality };
+type refRuleType = { [ruleType]: "ref"; id: string; [ruleCardinalityKey]?: ruleCardinality };
+type rangeRuleType = { [ruleType]: "range"; range: string; [ruleCardinalityKey]?: ruleCardinality };
 
 type rule = sequenceRuleType | oneOfRuleType | refRuleType | rangeRuleType;
 
@@ -73,6 +80,10 @@ type RuleBuilder<T> = {
    * ```
    */
   range: (range: string) => rangeRuleType;
+
+  oneOrMore(rule: rule): rule;
+  zeroOrMore(rule: rule): rule;
+  optional(rule: rule): rule;
 };
 
 export class Grammar<T extends Record<string, any> = {}> {
@@ -95,6 +106,10 @@ export class Grammar<T extends Record<string, any> = {}> {
     if (Object.hasOwn(this.rules, "root")) {
       throw new Error("Cannot extend a grammar with a root rule");
     }
+    if (Object.hasOwn(this.rules, key) && process.env.NODE_ENV !== "production") {
+      console.warn(`Rule "${key}" was already defined, but is being overwritten`);
+    }
+
     this.rules[key] = rule(this.builder);
     return this as Grammar<T & Record<RuleIdentifier, R>>;
   }
@@ -128,9 +143,64 @@ export class Grammar<T extends Record<string, any> = {}> {
         throw new Error(`Range must be in the form of a range literal (e.g. [0-9]), received: ${range}`);
       }
 
+      const cardinality = (() => {
+        const lastChar = range.slice(-1);
+        switch (lastChar) {
+          case "?":
+            return { range: range.slice(0, -1), [ruleCardinalityKey]: ruleCardinality.optional };
+          case "*":
+            return { range: range.slice(0, -1), [ruleCardinalityKey]: ruleCardinality.zeroOrMore };
+          case "+":
+            return { range: range.slice(0, -1), [ruleCardinalityKey]: ruleCardinality.oneOrMore };
+          case "]":
+            return {};
+        }
+      })();
+
       return {
         [ruleType]: "range",
         range,
+        ...cardinality,
+      };
+    },
+
+    oneOrMore: (rule) => {
+      if (
+        rule[ruleCardinalityKey] !== undefined &&
+        rule[ruleCardinalityKey] !== ruleCardinality.oneOrMore &&
+        process.env.NODE_ENV !== "production"
+      ) {
+        console.warn(`Rule had a different cardinality than "oneOrMore", which was overwritten`);
+      }
+      return {
+        ...rule,
+        [ruleCardinalityKey]: ruleCardinality.oneOrMore,
+      };
+    },
+    zeroOrMore: (rule) => {
+      if (
+        rule[ruleCardinalityKey] !== undefined &&
+        rule[ruleCardinalityKey] !== ruleCardinality.oneOrMore &&
+        process.env.NODE_ENV !== "production"
+      ) {
+        console.warn(`Rule had a different cardinality than "zeroOrMore", which was overwritten`);
+      }
+      return {
+        ...rule,
+        [ruleCardinalityKey]: ruleCardinality.zeroOrMore,
+      };
+    },
+    optional: (rule) => {
+      if (
+        rule[ruleCardinalityKey] !== undefined &&
+        rule[ruleCardinalityKey] !== ruleCardinality.oneOrMore &&
+        process.env.NODE_ENV !== "production"
+      ) {
+        console.warn(`Rule had a different cardinality than "optional", which was overwritten`);
+      }
+      return {
+        ...rule,
+        [ruleCardinalityKey]: ruleCardinality.optional,
       };
     },
   };
@@ -139,15 +209,30 @@ export class Grammar<T extends Record<string, any> = {}> {
     if (typeof rule === "string") {
       return `"${rule}"`;
     }
+    const cardinalityChar = (() => {
+      switch (rule[ruleCardinalityKey]) {
+        case ruleCardinality.zeroOrMore:
+          return "*";
+        case ruleCardinality.oneOrMore:
+          return "+";
+        case ruleCardinality.optional:
+          return "?";
+        case undefined:
+          return "";
+      }
+    })();
     switch (rule[ruleType]) {
-      case "sequence":
-        return rule.parts.map((part) => this.parser(part)).join(" ");
+      case "sequence": {
+        let resultStr = rule.parts.map((part) => this.parser(part)).join(" ");
+        if (cardinalityChar) resultStr = `(${resultStr})${cardinalityChar}`;
+        return resultStr;
+      }
       case "oneOf":
-        return `(${rule.parts.map((part) => this.parser(part)).join(" | ")})`;
+        return `(${rule.parts.map((part) => this.parser(part)).join(" | ")})` + cardinalityChar;
       case "ref":
-        return kebabCase(rule.id);
+        return kebabCase(rule.id) + cardinalityChar;
       case "range":
-        return rule.range;
+        return rule.range + cardinalityChar;
     }
   }
 

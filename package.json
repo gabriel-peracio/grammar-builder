@@ -3,7 +3,7 @@
   "module": "out/index.js",
   "main": "out/index.js",
   "type": "module",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A simple grammar builder compatible with GBNF (llama.cpp)",
   "keywords": [
     "grammar",

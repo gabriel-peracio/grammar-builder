@@ -2,7 +2,7 @@
 
 - [x] Add `root` rule
 - [ ] Add support for imports (e.g. define a "iso8601" reference, and then use it in a "date" field in another rule)
-- [ ] Add cardinality support (`oneOrMore`, `zeroOrMore`, `optional`)
+- [x] Add cardinality support (`oneOrMore`, `zeroOrMore`, `optional`)
 - [ ] Add sugar:
   - [ ] `list` allows "listItem, listItem, listItem" or "- listItem\n- listItem\n- listItem", etc.
         unrolls to `"- " listItem ('\n- ' listItem)*`
@@ -14,9 +14,9 @@
 - [x] Add JSDoc explanations for each rule and method
 - [x] Ensure coverage is up to snuff
 - [ ] Add husky to lint and prettify on commit
-- [ ] Add CI
-- [ ] Package and publish on npm
-- [ ] Add examples
+- [x] Add CI
+- [x] Package and publish on npm
+- [ ] Add more examples
 
 ## Research
 

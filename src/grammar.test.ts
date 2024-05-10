@@ -161,6 +161,34 @@ describe("grammarBuilder", () => {
     });
   });
 
+  describe("cardinality", () => {
+    describe.each([
+      ["zeroOrMore", "*"],
+      ["oneOrMore", "+"],
+      ["optional", "?"],
+    ])("%s", (cardinalityName, cardinalityChar) => {
+      it(`should augment a oneOf rule with the "${cardinalityName}" cardinality`, () => {
+        const grammar = new Grammar().root((r) => r[cardinalityName](r.oneOf("a", "b"))).build();
+        expect(grammar).toEqual(`root ::= ("a" | "b")${cardinalityChar}`);
+      });
+      it(`should augment a sequence rule with the "${cardinalityName}" cardinality`, () => {
+        const grammar = new Grammar().root((r) => r[cardinalityName](r.sequence("a", "b"))).build();
+        expect(grammar).toEqual(`root ::= ("a" "b")${cardinalityChar}`);
+      });
+      it(`should augment a range rule with the "${cardinalityName}" cardinality`, () => {
+        const grammar = new Grammar().root((r) => r[cardinalityName](r.range("[0-9]"))).build();
+        expect(grammar).toEqual(`root ::= [0-9]${cardinalityChar}`);
+      });
+      it(`should augment a ref rule with the "${cardinalityName}" cardinality`, () => {
+        const grammar = new Grammar()
+          .define("testRef", (r) => r.sequence("a"))
+          .root((r) => r[cardinalityName](r.ref("testRef")))
+          .build();
+        expect(grammar).toEqual(`test-ref ::= "a"\nroot ::= test-ref${cardinalityChar}`);
+      });
+    });
+  });
+
   describe("root", () => {
     it("should allow building after defining a root rule", () => {
       const grammar = new Grammar().root((r) => r.sequence("a", "b")).build();
