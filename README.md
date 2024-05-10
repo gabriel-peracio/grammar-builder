@@ -1,5 +1,7 @@
 # grammar-builder
 
+![CI](https://github.com/gabriel-peracio/grammar-builder/actions/workflows/ci.yml/badge.svg)
+
 This is a simple helper library to facilitate building [GBNF grammars](https://github.com/ggerganov/llama.cpp/blob/master/grammars/README.md) manually (as opposed to automatically generating them from something like a `JSONSchema` file)
 
 ## Why
@@ -49,7 +51,28 @@ const grammarString = myGrammar.build();
   // other-rule ::= "choice: " my-rule
   ```
 - **range**: Output a range of characters
+
   ```typescript
   r.range("[A-Z]+");
   // [A-Z]+
+  ```
+
+- **oneOrMore**: The passed rule must occur one or more times
+
+  ```typescript
+  r.oneOrMore(r.oneOf("a", "b"));
+  // ("a" | "b")+
+  ```
+
+- **zeroOrMore**: The passed rule can be absent or occur multiple times
+
+  ```typescript
+  r.zeroOrMore(r.oneOf("a", "b"));
+  // ("a" | "b")*
+  ```
+
+- **optional**: The passed rule can be absent or occur once
+  ```typescript
+  r.optional(r.oneOf("a", "b"));
+  // ("a" | "b")?
   ```
