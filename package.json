@@ -1,8 +1,9 @@
 {
   "name": "grammar-builder",
-  "module": "index.ts",
+  "module": "out/index.js",
+  "main": "out/index.js",
   "type": "module",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A simple grammar builder compatible with GBNF (llama.cpp)",
   "keywords": [
     "grammar",
@@ -19,18 +20,21 @@
   "homepage": "https://github.com/gabriel-peracio/grammar-builder#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gabriel-peracio/grammar-builder.git"
+    "url": "git+https://github.com/gabriel-peracio/grammar-builder.git"
   },
   "exports": {
     ".": "./out/index.js"
   },
   "types": "./out/index.d.ts",
+  "files": [
+    "out"
+  ],
   "scripts": {
     "test": "bun test",
     "test:watch": "bun test --watch",
     "test:coverage": "bun test --coverage",
     "build": "bun build --entrypoints src/index.ts --outdir ./out --target browser --sourcemap=external --minify && bunx tsc",
-    "publish": "npm run build && npm publish --access public",
+    "publish": "bun run clean && bun run build",
     "clean": "rm -rf ./out"
   },
   "devDependencies": {
